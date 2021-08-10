@@ -1,6 +1,4 @@
-const app = require('../../app');
-
-const processError = function() {
+const processError = function(app) {
   process.on('uncaughtException', err => {
     // eslint-disable-next-line no-console
     console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
