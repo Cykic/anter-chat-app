@@ -6,6 +6,10 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
+// MIDDLEWARES
+
+// ROUTES
+
 // ERROR PAGE 404
 app.all('*', (req, _res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
