@@ -7,9 +7,10 @@ module.exports = function(to, message) {
         to: to,
         from: process.env.TWILO_NUMBER,
       }).then(function(data) {
+        if (process.env.NODE_ENV !== 'production')
         console.log('ASms Sent', data);
       }).catch(function(err) {
-        console.error('Could not Send Sms');
+        if (process.env.NODE_ENV !== 'production')
         console.error(err);
       });
   };
