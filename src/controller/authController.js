@@ -33,37 +33,6 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 };
 
-exports.signup = async (req, res) => {
-  try {
-    const newUser = await User.create({
-      username: req.body.username,
-      phoneNumber: req.body.phoneNumber,
-      password: req.body.password
-    });
-
-    newUser.sendPhoneVerification();
-
-    createSendToken(newUser, 201, req, res);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      status: 'fail',
-      message: error
-    });
-  }
-};
-
-exports.login = async (req, res) => {
-  // client
-  // .verify
-  // .services(process.env.SERVICEID)
-  // .verifications
-  // .create({
-  //     to: req.body.phoneNumber,
-  //     channel: req.body.channel
-  // })
-};
-
 exports.verify = catchAsync(async (req, res, next) => {
   const hashedCode = crypto
     .createHash('md5')
@@ -85,4 +54,38 @@ exports.verify = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'Verification Successful'
   });
+});
+
+exports.signup = catchAsync(async (req, res, next) => {
+  const newUser = await User.create({
+    username: req.body.username,
+    phoneNumber: req.body.phoneNumber,
+    password: req.body.password
+  });
+
+  createSendToken(newUser, 201, req, res);
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { phoneNumber, password } = req.body;
+
+  if (!phoneNumber || !password) {
+    return next(new AppError('Please provide phone number and password!', 400));
+  }
+
+  const user = await User.findOne({ phoneNumber }).select('+password');
+
+  if (!user.isVerified)
+    return next(
+      new AppError(
+        'Your account has not been verified, Please make sure to verify your phone number!',
+        401
+      )
+    );
+
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError('Incorrect Phone number or password!', 401));
+  }
+
+  createSendToken(user, 200, req, res);
 });
