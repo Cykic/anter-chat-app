@@ -80,11 +80,11 @@ exports.verify = catchAsync(async (req, res, next) => {
     .update(`${code}`)
     .digest('hex');
 
-  User.findOne({ verificationCode }, function(err, user) {
+  User.findOne({ verificationCode }, async function(err, user) {
     if (err)
       return next(new AppError('Unable to verify user request new code', 400));
     user.isVerified = true;
-    user.save({ validateBeforeSave: false });
+    await user.save({ validateBeforeSave: false });
 
     res.status(200).json({
       status: 'success',
