@@ -10,6 +10,8 @@ const compression = require('compression');
 const userRouter = require('./src/routes/userRoutes');
 const errorController = require('./src/error/errorController');
 const AppError = require('./src/error/appError');
+const homeRouter = require('./src/routes/homeRouter');
+
 
 //Start express app
 const app = express();
@@ -50,6 +52,7 @@ app.use(xss());
 
 
 // ROUTES
+app.use('/', homeRouter);
 app.use('/api/v1/users', userRouter);
 
 // ERROR PAGE 404
