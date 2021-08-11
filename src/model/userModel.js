@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const AppError = require('./../error/appError');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -8,9 +9,11 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     phoneNumber: {
-        type: String,
+        type: Number,
         required: [true, 'Please provide your phone number!'],
-        unique: true
+        unique: true,
+        minlength: 11,
+        maxlength: 11
     },
     password: {
         type: String,
@@ -30,11 +33,17 @@ const userSchema = new mongoose.Schema({
     ]
 });
 
+//Hashing the password
 userSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
 
     this.password = await bcrypt.hash(this.password, 12);
 });
+
+//FOR LOGGING IN: Checking if the inputted password matches that in the database
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
