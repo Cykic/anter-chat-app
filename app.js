@@ -1,10 +1,17 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const compression = require('compression');
 
 const userRouter = require('./src/routes/userRoutes');
 const errorController = require('./src/error/errorController');
 const AppError = require('./src/error/appError');
 
+//Start express app
 const app = express();
 
 if (process.env.NODE_ENV === 'development') {
@@ -13,9 +20,34 @@ if (process.env.NODE_ENV === 'development') {
 
 const port = process.env.PORT || 3000;
 
+app.enable('trust proxy');
+
+// Implement CORS
+app.use(cors()); // Access-Control-Allow-Origin * ('*' means all the requests no matter where they are coming from)
+
+app.options('*', cors());
+
+//Set security HTTP headers. NOTE: Always use for all ur express applications!
+app.use(helmet());
+
+//Limit requests from the same API
+const limiter = rateLimit({
+  max: 100, //100 request per hour
+  windowMs: 60 * 60 * 1000, //1 hour in milliseconds
+  message: 'Too many request from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
+
 // MIDDLEWARES
 app.use(express.json({limit: '10kb'}));
 app.use(express.urlencoded({extended: true, limit: '10kb'}));
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+//Data sanitization XSS(cross-site scripting)
+app.use(xss());
+
 
 // ROUTES
 app.use('/api/v1/users', userRouter);
