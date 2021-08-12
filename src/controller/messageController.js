@@ -3,7 +3,6 @@ const catchAsync = require('../error/catchAsync');
 const AppError = require('../error/appError');
 const Message = require('../model/messageModel');
 
-let fileName;
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/data/uploads');
