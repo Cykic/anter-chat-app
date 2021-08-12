@@ -13,9 +13,9 @@ const processError = function(app) {
     console.log('UNHANDLED REJECTION! 💥 Shutting down...');
     // eslint-disable-next-line no-console
     console.log(err.name, err.message);
-    app.close(() => {
-      process.exit(1);
-    });
+    // app.close(() => {
+    //   process.exit(1);
+    // });
   });
 };
 
