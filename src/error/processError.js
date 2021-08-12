@@ -1,4 +1,4 @@
-const processError = function(app) {
+const processError = function() {
   process.on('uncaughtException', err => {
     // eslint-disable-next-line no-console
     console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -13,9 +13,7 @@ const processError = function(app) {
     console.log('UNHANDLED REJECTION! 💥 Shutting down...');
     // eslint-disable-next-line no-console
     console.log(err.name, err.message);
-    // app.close(() => {
-    //   process.exit(1);
-    // });
+    process.exit(1);
   });
 };
 
