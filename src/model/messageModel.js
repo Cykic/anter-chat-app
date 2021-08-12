@@ -18,6 +18,9 @@ const messageSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: [true, 'Message must belong to a user!']
+    },
+    username: {
+        type: String
     }
 });
 

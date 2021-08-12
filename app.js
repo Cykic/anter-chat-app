@@ -15,7 +15,6 @@ const errorController = require('./src/error/errorController');
 const AppError = require('./src/error/appError');
 const homeRouter = require('./src/routes/homeRouter');
 
-
 //Start express app
 const app = express();
 
@@ -47,8 +46,8 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // MIDDLEWARES
-app.use(express.json({limit: '10kb'}));
-app.use(express.urlencoded({extended: true, limit: '10kb'}));
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 //Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -61,8 +60,8 @@ app.use(compression());
 
 // ROUTES
 app.use('/', homeRouter);
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/messages', messageRouter);
+app.use('/api/v1/user', userRouter);
+app.use('/api/v1/message', messageRouter);
 
 // ERROR PAGE 404
 app.use('*', (req, res, next) => {
