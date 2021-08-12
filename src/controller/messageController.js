@@ -10,8 +10,8 @@ const multerStorage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const extension = file.mimetype.split('/')[1];
-        // cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
-        cb(null, `user-${Date.now()}.${extension}`);
+        cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
+        // cb(null, `user-${Date.now()}.${extension}`);
     }
 });
 const multerFilter = (req, file, cb) => {
