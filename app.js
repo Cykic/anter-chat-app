@@ -1,3 +1,5 @@
+const path = require('path');
+
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -23,6 +25,9 @@ if (process.env.NODE_ENV === 'development') {
 const port = process.env.PORT || 3000;
 
 app.enable('trust proxy');
+
+//Serving static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Implement CORS
 app.use(cors()); // Access-Control-Allow-Origin * ('*' means all the requests no matter where they are coming from)
