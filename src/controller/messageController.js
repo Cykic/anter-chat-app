@@ -35,17 +35,18 @@ exports.createMessage = catchAsync(async (req, res, next) => {
   // console.log(req.body);
   const message = await Message.create({
     message: req.body.message,
-    image: req.user.fileName,
+    image: `${process.env.PROD_URL}${req.file.path}`,
     user: req.user.id,
     username: req.user.username
   });
-  const { username, image } = message;
+  const { username, image, createdAt } = message;
   res.status(201).json({
     status: 'success',
     data: {
       username,
+      message: message.message,
       image,
-      message: message.message
+      createdAt
     }
   });
 });
