@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const compression = require('compression');
 
 const userRouter = require('./src/routes/userRoutes');
+const messageRouter = require('./src/routes/messageRoutes');
 const errorController = require('./src/error/errorController');
 const AppError = require('./src/error/appError');
 const homeRouter = require('./src/routes/homeRouter');
@@ -56,6 +57,7 @@ app.use(compression());
 // ROUTES
 app.use('/', homeRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/messages', messageRouter);
 
 // ERROR PAGE 404
 app.all('*', (req, res, next) => {

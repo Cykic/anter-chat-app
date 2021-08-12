@@ -114,6 +114,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   await newUser.save();
 
   createSendToken(newUser, 201, req, res);
+
 });
 
 // protecting route
@@ -141,3 +142,4 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = freshUser;
   next();
 });
+
