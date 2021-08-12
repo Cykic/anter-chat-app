@@ -32,7 +32,10 @@ exports.sendImage = upload.single('image');
 exports.createMessage = catchAsync(async (req, res, next) => {
     // console.log(req.files);
     // console.log(req.body);
-    const message = await Message.create(req.body);
+    const message = await Message.create({
+        message: req.body.message,
+        user: req.user.id
+    });
 
     res.status(201).json({
         status: 'success',
