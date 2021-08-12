@@ -41,7 +41,7 @@ exports.createMessage = catchAsync(async (req, res, next) => {
     username: req.user.username
   });
 
-res.status(201).json({
+  res.status(201).json({
     status: 'success',
     data: message
   });
