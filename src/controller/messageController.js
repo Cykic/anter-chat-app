@@ -1,5 +1,7 @@
+const multer = require('multer');
 const catchAsync = require('../error/catchAsync');
 const AppError = require('../error/appError');
+const Message = require('../model/messageModel');
 
 const multerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -8,7 +10,7 @@ const multerStorage = multer.diskStorage({
     filename: (req, file, cb) => {
         const extension = file.mimetype.split('/')[1];
         // cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
-        cb(null, `${file}.image-${Date.now()}.${extension}`); //"image" is the fieldname on the front end form
+        cb(null, `user-${Date.now()}.${extension}`);
     }
 });
 
@@ -27,4 +29,13 @@ const upload = multer({
 
 exports.sendImage = upload.array('image', 12);
 
-exports.createMessage = catchAsync(async (req, res, next) => {});
+exports.createMessage = catchAsync(async (req, res, next) => {
+    // console.log(req.files);
+    // console.log(req.body);
+    const message = await Message.create(req.body);
+
+    res.status(201).json({
+        status: 'success',
+        data: message
+    });
+});
