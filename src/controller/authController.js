@@ -4,6 +4,8 @@ const catchAsync = require('../error/catchAsync');
 const AppError = require('../error/appError');
 const crypto = require('crypto');
 const sendSms = require('../../utils/sendSms');
+const { promisify } = require('util');
+
 
 // FUNCTIONS
 const generateOTP = function() {
@@ -112,4 +114,30 @@ exports.signup = catchAsync(async (req, res, next) => {
   await newUser.save();
 
   createSendToken(newUser, 201, req, res);
+});
+
+// protecting route
+exports.protect = catchAsync(async (req, res, next) => {
+  // Get token
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token)
+    return next(
+      new AppError('You are not Logged in, Login to get access', 401)
+    );
+  // Verify token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    return next(new AppError('The token for this user does not exist', 401));
+  }
+  // GRANT ACCESS TO THE PROTECTED ROUTE
+  req.user = freshUser;
+  next();
 });
