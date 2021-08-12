@@ -50,13 +50,15 @@ app.use(mongoSanitize());
 //Data sanitization XSS(cross-site scripting)
 app.use(xss());
 
+//Compress all the texts that is sent to clients
+app.use(compression());
 
 // ROUTES
 app.use('/', homeRouter);
 app.use('/api/v1/users', userRouter);
 
 // ERROR PAGE 404
-app.all('*', (req, _res, next) => {
+app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
