@@ -40,9 +40,13 @@ exports.createMessage = catchAsync(async (req, res, next) => {
     user: req.user.id,
     username: req.user.username
   });
-
+  const { username, image } = message;
   res.status(201).json({
     status: 'success',
-    data: message
+    data: {
+      username,
+      image,
+      message: message.message
+    }
   });
 });
