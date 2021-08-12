@@ -4,6 +4,8 @@ const catchAsync = require('../error/catchAsync');
 const AppError = require('../error/appError');
 const crypto = require('crypto');
 const sendSms = require('../../utils/sendSms');
+const { promisify } = require('util');
+
 
 // FUNCTIONS
 const generateOTP = function() {
@@ -88,7 +90,7 @@ exports.verify = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      message: 'Verification Successful'
+      message: 'Verification successful, proceed to Login'
     });
   });
 });
@@ -103,9 +105,41 @@ exports.signup = catchAsync(async (req, res, next) => {
   newUser.password = req.body.password;
   newUser.verificationCode = hash;
 
+  try {
+    await sendSms(newUser.phoneNumber, `Your Chat App OTP is ${code}`);
+  } catch (err) {
+    return next(new AppError('Could not send OTP, Sign up again', 500));
+  }
+
   await newUser.save();
 
-  sendSms(newUser.phoneNumber, `Your Chat App OTP is ${code}`);
-
   createSendToken(newUser, 201, req, res);
+
 });
+
+// protecting route
+exports.protect = catchAsync(async (req, res, next) => {
+  // Get token
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token)
+    return next(
+      new AppError('You are not Logged in, Login to get access', 401)
+    );
+  // Verify token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    return next(new AppError('The token for this user does not exist', 401));
+  }
+  // GRANT ACCESS TO THE PROTECTED ROUTE
+  req.user = freshUser;
+  next();
+});
+

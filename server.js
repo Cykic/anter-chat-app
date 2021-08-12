@@ -7,7 +7,7 @@ const processError = require('./src/error/processError');
 const connectDB = require('./src/data/mongoDB');
 
 // Handles process Error on express app
-processError(app);
+processError();
 
 // Connect mongoDB
 connectDB();
