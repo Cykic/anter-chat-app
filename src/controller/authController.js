@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
+const crypto = require('crypto');
 const User = require('./../model/userModel');
 const catchAsync = require('../error/catchAsync');
 const AppError = require('../error/appError');
-const crypto = require('crypto');
 const sendSms = require('../../utils/sendSms');
-const { promisify } = require('util');
-
 
 // FUNCTIONS
 const generateOTP = function() {
@@ -75,7 +74,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.verify = catchAsync(async (req, res, next) => {
-  const code = req.params.code;
+  const { code } = req.params;
   // hashing
   const verificationCode = crypto
     .createHash('md5')
@@ -105,16 +104,15 @@ exports.signup = catchAsync(async (req, res, next) => {
   newUser.password = req.body.password;
   newUser.verificationCode = hash;
 
+  await newUser.save();
+
   try {
     await sendSms(newUser.phoneNumber, `Your Chat App OTP is ${code}`);
   } catch (err) {
     return next(new AppError('Could not send OTP, Sign up again', 500));
   }
 
-  await newUser.save();
-
   createSendToken(newUser, 201, req, res);
-
 });
 
 // protecting route
@@ -142,4 +140,3 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = freshUser;
   next();
 });
-
