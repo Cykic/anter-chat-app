@@ -104,13 +104,13 @@ exports.signup = catchAsync(async (req, res, next) => {
   newUser.password = req.body.password;
   newUser.verificationCode = hash;
 
+  await newUser.save();
+
   try {
     await sendSms(newUser.phoneNumber, `Your Chat App OTP is ${code}`);
   } catch (err) {
     return next(new AppError('Could not send OTP, Sign up again', 500));
   }
-
-  await newUser.save();
 
   createSendToken(newUser, 201, req, res);
 });
