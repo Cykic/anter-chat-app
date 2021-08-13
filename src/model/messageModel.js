@@ -5,10 +5,18 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Messsage cannot be empty!']
   },
-  image: {
-    type: String,
-    required: false
-  },
+  image: [
+    {
+      filepath: {
+        type: String,
+        required: false
+      },
+      webViewPath: {
+        type: String,
+        required: false
+      }
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now()
