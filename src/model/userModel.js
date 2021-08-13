@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     required: [true, 'Please provide your phone number!'],
-    unique: true
+    unique: [true, 'Cannot have multiple account with same number']
     // minlength: 11,
     // maxlength: 11
   },
