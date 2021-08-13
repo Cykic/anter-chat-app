@@ -28,14 +28,14 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
-exports.sendImage = upload.single('image');
+exports.sendImage = upload.array('image',12);
 
 exports.createMessage = catchAsync(async (req, res, next) => {
   // console.log(req.files);
   // console.log(req.body);
   const message = await Message.create({
     message: req.body.message,
-    image: `${process.env.PROD_URL}${req.file.path}`,
+    image: req.body.image,
     user: req.user.id
   });
   const { username, image, createdAt } = message;
