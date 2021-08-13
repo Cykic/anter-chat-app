@@ -50,3 +50,15 @@ exports.createMessage = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+exports.getAllMessage = catchAsync(async (req, res, next) => {
+  const messages = await Message.find({ user: req.user.id });
+
+  if (!messages)
+    return next(new AppError('This user has not posted any message', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: messages
+  });
+});
