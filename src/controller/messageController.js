@@ -36,8 +36,7 @@ exports.createMessage = catchAsync(async (req, res, next) => {
   const message = await Message.create({
     message: req.body.message,
     image: `${process.env.PROD_URL}${req.file.path}`,
-    user: req.user.id,
-    username: req.user.username
+    user: req.user.id
   });
   const { username, image, createdAt } = message;
   res.status(201).json({
@@ -46,7 +45,8 @@ exports.createMessage = catchAsync(async (req, res, next) => {
       username,
       message: message.message,
       image,
-      createdAt
+      createdAt,
+      name: req.user.username
     }
   });
 });

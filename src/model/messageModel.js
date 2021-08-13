@@ -17,17 +17,15 @@ const messageSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: [true, 'Message must belong to a user!']
-  },
-  username: {
-    type: String
   }
 });
 
 messageSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
-    select: 'username '
+    select: 'username phoneNumber'
   });
+  next();
 });
 
 const Message = mongoose.model('Message', messageSchema);

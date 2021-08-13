@@ -7,7 +7,8 @@ const authController = require('./../controller/authController');
 router.use(authController.protect);
 
 router
+  .route('/')
   .get(messageController.getAllMessage)
-  .post('/', messageController.sendImage, messageController.createMessage);
+  .post(messageController.sendImage, messageController.createMessage);
 
 module.exports = router;
