@@ -9,7 +9,7 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const extension = file.mimetype.split('/')[1];
-    let fileName = `user-${req.user.id}-${Date.now()}.${extension}`;
+    const fileName = `user-${req.user.id}-${Date.now()}.${extension}`;
     req.user.fileName = fileName;
     cb(null, fileName);
     // cb(null, `user-${Date.now()}.${extension}`);
@@ -52,13 +52,20 @@ exports.createMessage = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllMessage = catchAsync(async (req, res, next) => {
-  const messages = await Message.find({ user: req.user.id });
+  let messages;
+  if (req.query.all === 'true') {
+    messages = await Message.find();
+  }
+  if (!req.query.all || req.query.all === 'false') {
+    messages = await Message.find({ user: req.user.id });
+  }
 
   if (!messages)
     return next(new AppError('This user has not posted any message', 404));
 
   res.status(200).json({
     status: 'success',
+    length: messages.length,
     data: messages
   });
 });
