@@ -17,6 +17,11 @@ const connectDB = () => {
     .then(() => {
       // eslint-disable-next-line no-console
       console.log('DB connection successful!');
+    })
+    .catch(err => {
+      console.log('Error Connecting DB:...', err.message);
+      console.log('Reconnecting !!!');
+      connectDB();
     });
 };
 
